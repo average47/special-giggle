@@ -1,0 +1,41 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens, exposed to Tailwind as utilities: bg-background,
+ * text-foreground, border-hairline, bg-brand, font-sans, font-mono.
+ *
+ * A utility only exists if the token is declared here, under the namespace it
+ * belongs to -- `--color-*` for colours. A bare `--brand` on :root is just a
+ * CSS variable; Tailwind never sees it.
+ *
+ * `inline` matters here -- it makes the generated utilities reference these
+ * variables rather than resolve them once, so the dark-mode values below
+ * actually take effect.
+ */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-hairline: color-mix(in srgb, var(--foreground) 15%, transparent);
+  --color-brand: var(--brand);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --brand: #c71585;
+
+  [data-brand='truecrime'] {
+    --brand: #f4aa00;
+  }
+  [data-brand='truecrimeextra'] {
+    --brand: #1788a5;
+  }
+  [data-brand='legend'] {
+    --brand: #ff6600;
+  }
+  [data-brand='legendxtra'] {
+    --brand: #1e7d6e;
+  }
+}

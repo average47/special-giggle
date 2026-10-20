@@ -1,0 +1,8 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+# eslint-config-next pulls this in; its postinstall links the native resolver
+# binding, and lint fails without it.
+allowBuilds:
+  unrs-resolver: true
