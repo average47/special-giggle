@@ -16,7 +16,7 @@ export interface IWordPressPage {
 }
 
 /** The menu locations registered by the CMS theme (apps/cms/theme/functions.php). */
-export type TMenuLocation = 'PRIMARY' | 'FOOTER';
+export type TMenuLocation = 'PRIMARY' | 'SUBHEAD' | 'FOOTER';
 
 export interface IWordPressMenuItemNode {
   databaseId: number;
@@ -31,6 +31,8 @@ export interface IWordPressMenuItemNode {
   uri: string;
   /** `_blank` when the editor ticked "open in new tab", otherwise null. */
   target: string | null;
+  /** True when the editor ticked "Use Icon" for this item. */
+  useIcon: boolean;
   order: number;
 }
 
