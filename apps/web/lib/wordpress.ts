@@ -112,6 +112,7 @@ const MENU_BY_LOCATION = /* GraphQL */ `
         label
         uri
         target
+        useIcon
         order
       }
     }

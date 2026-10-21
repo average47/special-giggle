@@ -45,6 +45,46 @@ const server = http.createServer((req, res) => {
   req.pipe(proxyReq, { end: true });
 });
 
+// WebSocket upgrades (Next.js dev HMR at /_next/hmr) need their own handling:
+// Node routes Upgrade requests to this event, not the request handler above.
+// Without this the HMR socket never connects, and client components silently
+// fail to hydrate -- the page renders but nothing is interactive.
+server.on('upgrade', (req, socket, head) => {
+  const [hostname] = (req.headers.host ?? '').split(':');
+  const mappedHost = domainMap[hostname] ?? 'truecrime-tv.co.uk';
+
+  const proxyReq = http.request({
+    hostname: 'localhost',
+    port: NEXT_PORT,
+    path: req.url,
+    method: req.method,
+    headers: { ...req.headers, host: mappedHost },
+  });
+
+  proxyReq.on('upgrade', (proxyRes, proxySocket, proxyHead) => {
+    const statusLine = `HTTP/1.1 ${proxyRes.statusCode} ${proxyRes.statusMessage}`;
+    const headerLines = Object.entries(proxyRes.headers).map(
+      ([key, value]) => `${key}: ${value}`
+    );
+    socket.write(`${[statusLine, ...headerLines].join('\r\n')}\r\n\r\n`);
+
+    if (proxyHead?.length) proxySocket.unshift(proxyHead);
+    proxySocket.pipe(socket);
+    socket.pipe(proxySocket);
+
+    proxySocket.on('error', () => socket.destroy());
+    socket.on('error', () => proxySocket.destroy());
+  });
+
+  proxyReq.on('error', (err) => {
+    console.error(chalk.red(`[proxy] upgrade ${req.url} → ${err.message}`));
+    socket.destroy();
+  });
+
+  if (head?.length) proxyReq.write(head);
+  proxyReq.end();
+});
+
 server.listen(PROXY_PORT, () => {
   console.log(
     chalk.inverse.bold(

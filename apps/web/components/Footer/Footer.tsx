@@ -6,7 +6,7 @@ import { getMenu } from '@/lib/wordpress';
 import { MenuItems } from '../MenuItems';
 
 const BAR =
-  'mt-auto flex min-h-14 items-center border-t border-hairline px-6 py-5 flex-col gap-10 text-sm text-white bg-brand';
+  'mt-auto flex min-h-14 items-center border-t border-hairline p-6 flex-col gap-10  text-white bg-brand';
 
 // The pipe between items. `[&>li+li]` skips the first one, and only reaches
 // direct children, so a submenu -- which stacks -- doesn't get separators.
@@ -56,15 +56,25 @@ async function FooterMenu() {
           listClassName={`flex flex-wrap gap-x-5 gap-y-2 ${SEPARATED}`}
           // A nested level reads as a group under its parent, not alongside it.
           nestedListClassName="mt-1.5 flex flex-col gap-1.5"
-          linkClassName="text-sm opacity-75 hover:underline hover:opacity-100"
+          linkClassName="text-md hover:underline hover:opacity-100"
         />
       </nav>
-      <p>Copyright &copy; {year} - CBS AMC Networks UK Channels Partnership</p>
-      <p>CBS&reg; is a Registered Trademark of CBS Broadcasting Inc.</p>
-      <p>
-        All Rights Reserved. CBS AMC Networks UK Channels Partnership,
-        Authorised User.
-      </p>
+      <ul className="flex flex-col gap-y-2 items-center justify-center text-sm">
+        <li>
+          <p>
+            Copyright &copy; {year} - CBS AMC Networks UK Channels Partnership
+          </p>
+        </li>
+        <li>
+          <p>CBS&reg; is a Registered Trademark of CBS Broadcasting Inc.</p>
+        </li>
+        <li>
+          <p>
+            All Rights Reserved. CBS AMC Networks UK Channels Partnership,
+            Authorised User.
+          </p>
+        </li>
+      </ul>
       <ul className="flex gap-x-5">
         <li style={{ display: networkPath === 'truecrime' ? 'none' : 'block' }}>
           <a
@@ -74,8 +84,8 @@ async function FooterMenu() {
           >
             <Image
               src="/truecrime.png"
-              width={130}
-              height={40}
+              width={98}
+              height={30}
               alt="True Crime TV Logo"
             />
           </a>
@@ -92,8 +102,8 @@ async function FooterMenu() {
           >
             <Image
               src="/truecrimextra.png"
-              width={174}
-              height={40}
+              width={131}
+              height={30}
               alt="True Crime Extra TV Logo"
             />
           </a>
@@ -106,8 +116,8 @@ async function FooterMenu() {
           >
             <Image
               src="/watch.png"
-              width={160}
-              height={40}
+              width={120}
+              height={30}
               alt="Watch Free UK Logo"
             />
           </a>
@@ -120,8 +130,8 @@ async function FooterMenu() {
           >
             <Image
               src="/legend.png"
-              width={89}
-              height={40}
+              width={67}
+              height={30}
               alt="Legend TV Logo"
             />
           </a>
@@ -136,8 +146,8 @@ async function FooterMenu() {
           >
             <Image
               src="/legendxtra.png"
-              width={133}
-              height={40}
+              width={100}
+              height={30}
               alt="Legend Extra TV Logo"
             />
           </a>
