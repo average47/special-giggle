@@ -1,7 +1,9 @@
 import { Suspense } from 'react';
+import { connection } from 'next/server';
 import Image from 'next/image';
 import { getNetworkPath } from '@/lib/getNetworkPath';
 import { getMenu } from '@/lib/wordpress';
+import { withTvGuideDays } from '@/lib/tvGuideMenu';
 import { siteConfigNetworkMap } from '@/lib/siteConfigDomainMap';
 import { MenuItems } from '../MenuItems';
 import { HeaderOverlay } from './HeaderOverlay';
@@ -31,10 +33,24 @@ async function HeaderMenu() {
 
   // Both menus for this tenant, fetched together since neither depends on the
   // other. Each is empty until an editor assigns a menu to that location.
-  const [primary, subhead] = await Promise.all([
+  const [primary, rawSubhead] = await Promise.all([
     getMenu(networkPath, 'PRIMARY'),
     getMenu(networkPath, 'SUBHEAD'),
   ]);
+
+  // The TV Guide's "Today"/"Tomorrow" items point at the matching weekday page
+  // and those two weekday items are hidden -- recomputed each request so it
+  // tracks the date. `connection()` marks this as request-time so Cache
+  // Components allows the `new Date()` inside withTvGuideDays (it can't be read
+  // while prerendering).
+  await connection();
+  const subhead = withTvGuideDays(rawSubhead);
+
+  // The Subhead bar (md and up) shows only the top-level items, without their
+  // submenus and without Search. The overlay below still gets the full menu.
+  const subheadBar = subhead
+    .filter((item) => item.label !== 'Search')
+    .map((item) => ({ ...item, children: [] }));
 
   return (
     <>
@@ -45,11 +61,17 @@ async function HeaderMenu() {
             width={siteConfig?.width || 130}
             height={siteConfig?.height || 40}
             alt="Brand Logo"
+            // Above the fold and the LCP element, so load it eagerly.
+            priority
+            // Tailwind's preflight forces `height: auto` on images; pin it back
+            // to the configured height so the rendered size matches the width
+            // and height props (a fixed box) and Next stops warning.
+            style={{ height: siteConfig?.height || 40 }}
           />
           {/* Nothing assigned to the Primary location yet: render the bar, not an
               empty <nav>, so the page doesn't shift once an editor assigns one. */}
           {primary.length > 0 && (
-            <nav aria-label="Primary">
+            <nav aria-label="Primary" className="hidden md:block">
               <MenuItems
                 items={primary}
                 // The Primary menu holds the social links: items with "Use icon"
@@ -65,20 +87,20 @@ async function HeaderMenu() {
             </nav>
           )}
           {/* ml-auto on the button keeps it hard against the right edge whether
-              or not the Primary nav is present. */}
-          <HeaderOverlay />
+              or not the Primary nav is present. The overlay holds its own copy
+              of both menus; the versions above and below stay put. */}
+          <HeaderOverlay primary={primary} subhead={subhead} />
         </div>
       </header>
 
       {/* The Subhead menu as its own horizontal bar beneath the header. Rendered
           only when a menu is assigned to the location, matching the Primary nav
           above so the page doesn't shift once an editor assigns one. */}
-      {subhead.length > 0 && (
-        <nav aria-label="Subhead" className="border-b border-hairline">
+      {subheadBar.length > 0 && (
+        <nav aria-label="Subhead" className="hidden border-b border-hairline md:block">
           <MenuItems
-            items={subhead}
+            items={subheadBar}
             listClassName="mx-auto flex w-full max-w-7xl flex-wrap items-center gap-5 p-4"
-            nestedListClassName="ml-3 flex flex-wrap items-center gap-3 border-l border-hairline pl-3 [&_a]:text-sm [&_a]:font-normal [&_a]:opacity-75"
             linkClassName="text-[15px] font-medium hover:underline"
           />
         </nav>

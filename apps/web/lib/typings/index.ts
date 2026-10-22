@@ -40,6 +40,14 @@ export interface IWordPressMenuItem extends IWordPressMenuItemNode {
   children: IWordPressMenuItem[];
 }
 
+/** A site's general settings: the Site Title and Tagline from wp-admin. */
+export interface IWordPressSiteInfo {
+  /** Site Title (the `blogname` option). */
+  title: string;
+  /** Tagline (the `blogdescription` option); empty string when unset. */
+  description: string;
+}
+
 export interface IResolvedPage {
   page: IWordPressPage;
   /** True when the page came from the network root rather than the tenant. */

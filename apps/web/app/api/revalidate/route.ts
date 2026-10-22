@@ -21,7 +21,7 @@ interface IRevalidatePayload {
   menuLocations?: unknown;
 }
 
-const MENU_LOCATIONS: TMenuLocation[] = ['PRIMARY', 'FOOTER'];
+const MENU_LOCATIONS: TMenuLocation[] = ['PRIMARY', 'SUBHEAD', 'FOOTER'];
 
 function isAuthorized(request: Request): boolean {
   const secret = process.env.REVALIDATE_SECRET;

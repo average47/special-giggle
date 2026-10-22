@@ -87,6 +87,7 @@ async function FooterMenu() {
               width={98}
               height={30}
               alt="True Crime TV Logo"
+              style={{ height: 30 }}
             />
           </a>
         </li>
@@ -105,6 +106,7 @@ async function FooterMenu() {
               width={131}
               height={30}
               alt="True Crime Extra TV Logo"
+              style={{ height: 30 }}
             />
           </a>
         </li>
@@ -119,6 +121,7 @@ async function FooterMenu() {
               width={120}
               height={30}
               alt="Watch Free UK Logo"
+              style={{ height: 30 }}
             />
           </a>
         </li>
@@ -133,6 +136,7 @@ async function FooterMenu() {
               width={67}
               height={30}
               alt="Legend TV Logo"
+              style={{ height: 30 }}
             />
           </a>
         </li>
@@ -149,6 +153,7 @@ async function FooterMenu() {
               width={100}
               height={30}
               alt="Legend Extra TV Logo"
+              style={{ height: 30 }}
             />
           </a>
         </li>

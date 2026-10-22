@@ -4,6 +4,7 @@ import type {
   IWordPressMenuItem,
   IWordPressMenuItemNode,
   IWordPressPage,
+  IWordPressSiteInfo,
   TMenuLocation,
 } from './typings';
 
@@ -101,6 +102,33 @@ export async function getPageBySlug(
   );
 
   return page;
+}
+
+const GENERAL_SETTINGS = /* GraphQL */ `
+  query GeneralSettings {
+    generalSettings {
+      title
+      description
+    }
+  }
+`;
+
+/**
+ * A tenant's Site Title and Tagline, for page metadata. Cached per tenant and
+ * tagged so a settings change in wp-admin can revalidate it on demand.
+ */
+export async function getSiteInfo(
+  networkPath: string
+): Promise<IWordPressSiteInfo> {
+  'use cache';
+  cacheLife('hours');
+  cacheTag(`site-info:${networkPath}`);
+
+  const { generalSettings } = await queryTenant<{
+    generalSettings: IWordPressSiteInfo;
+  }>(networkPath, GENERAL_SETTINGS, {});
+
+  return generalSettings;
 }
 
 const MENU_BY_LOCATION = /* GraphQL */ `
